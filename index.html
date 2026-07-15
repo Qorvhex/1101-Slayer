@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="min-h-screen bg-slate-950 selection:bg-indigo-500/30 selection:text-indigo-200">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qorvhex 1101 Slayer - ابزار دگرگونی کدهای جاوااسکریپت</title>
+    <!-- Tailwind CSS (Robust styling framework) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-indigo': '0 0 20px rgba(99, 102, 241, 0.15)',
+                        'neon-emerald': '0 0 20px rgba(16, 185, 129, 0.15)',
+                        'neon-rose': '0 0 20px rgba(244, 63, 94, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Vazirmatn & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.02) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Subtle grid background for the master workspace */
+        .grid-bg {
+            background-size: 24px 24px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+        }
+
+        /* Beautiful styled scrollbars */
+        textarea::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        textarea::-webkit-scrollbar-track, .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        textarea::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 9999px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover, .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.6);
+        }
+
+        /* Glassmorphism utility card */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-200 flex flex-col justify-between grid-bg">
+
+    <!-- هدر نرم‌افزار -->
+    <header class="border-b border-slate-800/80 bg-slate-950/40 backdrop-blur-xl sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <div class="relative p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-indigo-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full font-medium">نسخه 2.0.0</span>
+                        <h1 class="text-xl font-extrabold tracking-tight text-white bg-clip-text bg-gradient-to-r from-slate-100 to-slate-300">Qorvhex 1101 Slayer</h1>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1">مبهم کننده کد برای جلوگیری از بن شدن درکلادفلر</p>
+                </div>
+            </div>
+
+            <!-- وضعیت اتصال موتور تحلیل -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-slate-400">هسته پردازش:</span>
+                <span class="text-emerald-400 font-medium code-font">Babel Standalone Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- پنل اصلی برنامه -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8 flex flex-col gap-8">
+        
+        <!-- گزینه‌ها و تنظیمات تغییر ساختار -->
+        <section class="glass-card rounded-2xl p-6 shadow-neon-indigo/5 transition duration-300">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-2">
+                    <span class="p-1 bg-indigo-500/10 text-indigo-400 rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                    </span>
+                    <h2 class="text-sm font-bold text-slate-300">پیکربندی پارامترهای تغییر ساختار (Metamorphic Configs)</h2>
+                </div>
+                <span class="text-xs text-slate-500 hidden sm:inline">گزینه‌های موردنظر خود را فعال کنید</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                
+                <!-- گزینه ۱: تغییر نام متغیرها -->
+                <div class="flex items-start p-4 bg-slate-950/40 border border-slate-800/60 rounded-xl hover:border-indigo-500/30 hover:bg-slate-950/70 transition duration-200 select-none group gap-3">
+                    <div class="mt-0.5 relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="opt-rename" checked class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="block text-xs font-bold text-slate-200 group-hover:text-white transition">تغییر نام متغیرها و توابع</span>
+                        <span class="block text-[11px] text-slate-400 mt-1 leading-relaxed">تغییر شناسه‌های محلی به کلمات ساختاریافته و معتبر انگلیسی جهت حفظ خوانایی ظاهری و برهم‌زدن تحلیل ثابت.</span>
+                    </div>
+                </div>
+
+                <!-- گزینه ۲: رمزگذاری مایکرو-کریپتو متون -->
+                <div class="flex items-start p-4 bg-slate-950/40 border border-slate-800/60 rounded-xl hover:border-indigo-500/30 hover:bg-slate-950/70 transition duration-200 select-none group gap-3">
+                    <div class="mt-0.5 relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="opt-strings" checked class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="block text-xs font-bold text-slate-200 group-hover:text-white transition">رمزنگاری رشته‌ها (XOR Cipher)</span>
+                        <span class="block text-[11px] text-slate-400 mt-1 leading-relaxed">کدگذاری تمامی عبارات رشته‌ای با استفاده از کلیدهای پویا و گیت‌های XOR به صورت خوداجرا در زمان اجرا.</span>
+                    </div>
+                </div>
+
+                <!-- گزینه ۳: مبهم‌سازی عددی -->
+                <div class="flex items-start p-4 bg-slate-950/40 border border-slate-800/60 rounded-xl hover:border-indigo-500/30 hover:bg-slate-950/70 transition duration-200 select-none group gap-3">
+                    <div class="mt-0.5 relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="opt-numbers" checked class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="block text-xs font-bold text-slate-200 group-hover:text-white transition">مبهم‌سازی محاسباتی اعداد</span>
+                        <span class="block text-[11px] text-slate-400 mt-1 leading-relaxed">تجزیه اعداد ثابت و صحیح به معادلات پویای ریاضی معادل در زمان ساخت با توابع بازگشتی ساده.</span>
+                    </div>
+                </div>
+
+                <!-- گزینه ۴: تزریق شرط‌های کاذب -->
+                <div class="flex items-start p-4 bg-slate-950/40 border border-slate-800/60 rounded-xl hover:border-indigo-500/30 hover:bg-slate-950/70 transition duration-200 select-none group gap-3">
+                    <div class="mt-0.5 relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="opt-predicates" checked class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="block text-xs font-bold text-slate-200 group-hover:text-white transition">تزریق شرط‌های فرعی (Opaque)</span>
+                        <span class="block text-[11px] text-slate-400 mt-1 leading-relaxed">تغییر ساختار کنترلی کد با قرار دادن عبارات محاسباتی درون شرط‌هایی که همیشه مقدار True دارند.</span>
+                    </div>
+                </div>
+
+                <!-- گزینه ۵: مبهم‌سازی ویژگی‌های اشیاء -->
+                <div class="flex items-start p-4 bg-slate-950/40 border border-slate-800/60 rounded-xl hover:border-indigo-500/30 hover:bg-slate-950/70 transition duration-200 select-none group gap-3 md:col-span-2 lg:col-span-2">
+                    <div class="mt-0.5 relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="opt-properties" checked class="sr-only peer">
+                        <div class="w-10 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-slate-400 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="block text-xs font-bold text-slate-200 group-hover:text-white transition">مبهم‌سازی دسترسی اشیاء (Property Access)</span>
+                        <span class="block text-[11px] text-slate-400 mt-1 leading-relaxed">تبدیل دسترسی به ویژگی اشیاء به صورت براکتی معادل (`object["property"]`) برای ممانعت از خوانایی آسان ساختار پروپرتی‌ها.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- پانل آمار پردازش -->
+            <div class="border-t border-slate-800/80 pt-5">
+                <div class="flex items-center gap-1.5 mb-3">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">داشبورد زنده آمار تغییرات</h3>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-3 bg-slate-950/50 border border-slate-800/60 rounded-xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span class="text-[10px] font-bold tracking-wider text-indigo-400 block">شناسه‌های دگرگون‌شده</span>
+                        <span id="stat-vars" class="block text-2xl font-black text-white code-font mt-1">0</span>
+                    </div>
+                    <div class="p-3 bg-slate-950/50 border border-slate-800/60 rounded-xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span class="text-[10px] font-bold tracking-wider text-emerald-400 block">رشته‌های رمزگذاری‌شده</span>
+                        <span id="stat-strings" class="block text-2xl font-black text-white code-font mt-1">0</span>
+                    </div>
+                    <div class="p-3 bg-slate-950/50 border border-slate-800/60 rounded-xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span class="text-[10px] font-bold tracking-wider text-amber-400 block">اعداد بازسازی‌شده</span>
+                        <span id="stat-numbers" class="block text-2xl font-black text-white code-font mt-1">0</span>
+                    </div>
+                    <div class="p-3 bg-slate-950/50 border border-slate-800/60 rounded-xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span class="text-[10px] font-bold tracking-wider text-rose-400 block">بلاک‌های شرطی تزریقی</span>
+                        <span id="stat-predicates" class="block text-2xl font-black text-white code-font mt-1">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- دکمه‌های کنترل کننده عملیات -->
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl backdrop-blur-md">
+            <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                <!-- دکمه اصلی تبدیل -->
+                <button id="btn-transform" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 active:scale-[0.98] transition-all font-semibold text-xs text-white rounded-xl flex items-center gap-2 shadow-lg shadow-indigo-600/20 cursor-pointer disabled:opacity-50 disabled:pointer-events-none">
+                    <svg id="transform-spinner" class="h-4 w-4 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="btn-text">شروع دگرگونی متامورفیک</span>
+                </button>
+                
+                <!-- دکمه آپلود فایل -->
+                <label for="file-upload" class="px-4 py-2.5 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white font-medium text-xs rounded-xl border border-slate-700/60 transition-all cursor-pointer flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    بارگذاری فایل JS
+                </label>
+                <input type="file" id="file-upload" accept=".js" class="hidden">
+
+                <!-- دکمه بارگذاری نمونه تستی -->
+                <button id="btn-demo" class="px-4 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 font-medium text-xs rounded-xl border border-indigo-500/20 transition-all cursor-pointer">
+                    بارگذاری کد تستی
+                </button>
+
+                <!-- دکمه پاکسازی صفحه -->
+                <button id="btn-reset" class="px-4 py-2.5 bg-slate-800/50 hover:bg-rose-900/20 hover:text-rose-400 text-slate-400 font-medium text-xs rounded-xl border border-slate-800 transition-all cursor-pointer">
+                    پاکسازی همگانی
+                </button>
+            </div>
+            
+            <div class="text-[11px] text-slate-400 text-right w-full md:w-auto leading-relaxed">
+                می‌توانید کدهای جاوااسکریپت خود را مستقیماً داخل کادر ورودی رها کنید (Drag & Drop).
+            </div>
+        </div>
+
+        <!-- کادر هشدار خطاها -->
+        <div id="error-alert" class="hidden p-4 bg-rose-950/30 border border-rose-800/40 rounded-2xl flex items-start gap-4 shadow-neon-rose/5 max-w-full overflow-hidden animate-headShake">
+            <div class="p-1.5 bg-rose-500/10 text-rose-400 rounded-lg mt-0.5 flex-shrink-0 border border-rose-500/15">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <div class="flex-grow overflow-hidden">
+                <h4 class="text-xs font-bold text-rose-300">خطای دستوری (Syntax Error) در تحلیل یا کامپایل کد</h4>
+                <p id="error-message" class="text-xs text-rose-400/90 mt-1.5 code-font whitespace-pre-wrap text-left break-all overflow-x-auto block max-w-full bg-rose-950/20 p-2.5 rounded-lg border border-rose-900/20" dir="ltr"></p>
+            </div>
+        </div>
+
+        <!-- نمای دو ستونه ویرایشگرها -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[520px]">
+            
+            <!-- ویرایشگر ورودی -->
+            <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden shadow-sm relative group focus-within:border-indigo-500/40 transition-all duration-300">
+                <!-- روکش حالت درگ اند دراپ -->
+                <div id="drag-overlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex-col items-center justify-center gap-4 z-20 border-2 border-dashed border-indigo-500 m-2 rounded-xl transition duration-200">
+                    <div class="p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20 animate-bounce">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                    </div>
+                    <span class="text-sm font-bold text-white">فایل جاوااسکریپت را همینجا رها کنید</span>
+                    <span class="text-xs text-slate-400">کد به صورت خودکار خوانده خواهد شد.</span>
+                </div>
+
+                <div class="px-4 py-3 bg-slate-950/60 border-b border-slate-800/60 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        <span class="text-xs font-bold text-slate-300">کد جاوااسکریپت ورودی (Source Code)</span>
+                    </div>
+                    <span class="text-[10px] code-font text-slate-500 tracking-wider">JAVASCRIPT ES6+</span>
+                </div>
+                
+                <div class="flex-grow flex relative">
+                    <!-- نمای شماره خط صوری -->
+                    <div class="bg-slate-950/30 text-slate-600 px-3 py-4 text-xs font-mono select-none text-right border-l border-slate-800/40 flex flex-col gap-0.5 min-w-[36px]">
+                        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div>
+                    </div>
+                    <textarea id="input-code" spellcheck="false" dir="ltr" placeholder="// کدهای جاوااسکریپت خود را در این بخش تایپ یا کپی کنید، یا فایل خود را بکشید و در اینجا رها کنید..." class="flex-grow p-4 bg-[#080d16]/30 text-slate-300 code-font text-xs leading-relaxed outline-none border-none resize-none focus:ring-0 placeholder:text-slate-600 h-[450px] text-left"></textarea>
+                </div>
+            </div>
+
+            <!-- ویرایشگر خروجی -->
+            <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl flex flex-col overflow-hidden relative group transition-all duration-300">
+                <!-- روکش حالت لودینگ -->
+                <div id="loading-overlay" class="hidden absolute inset-0 bg-[#060b13]/90 backdrop-blur-md flex flex-col items-center justify-center gap-3.5 z-10 transition">
+                    <div class="relative flex items-center justify-center">
+                        <div class="absolute w-12 h-12 rounded-full border-2 border-indigo-500/20 border-t-indigo-500 animate-spin"></div>
+                        <div class="absolute w-8 h-8 rounded-full border-2 border-emerald-500/20 border-b-emerald-500 animate-spin" style="animation-direction: reverse; animation-duration: 0.8s;"></div>
+                    </div>
+                    <span class="text-xs text-indigo-300 font-semibold tracking-wide animate-pulse">در حال بازسازی ساختار درخت AST...</span>
+                </div>
+
+                <div class="px-4 py-3 bg-slate-950/60 border-b border-slate-800/60 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-neon-emerald"></span>
+                        <span class="text-xs font-bold text-slate-300">خروجی متامورفیک (Metamorphic Output)</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <!-- دکمه کپی کد -->
+                        <button id="btn-copy" class="text-xs bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-700/60 transition-all flex items-center gap-1.5 cursor-pointer">
+                            <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            <span id="copy-text">کپی کد خروجی</span>
+                        </button>
+
+                        <!-- دکمه دانلود خروجی -->
+                        <button id="btn-download" class="text-xs bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 px-3 py-1.5 rounded-lg border border-indigo-500/20 transition-all flex items-center gap-1.5 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>دانلود .js</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex-grow flex relative">
+                    <!-- نمای شماره خط صوری -->
+                    <div class="bg-slate-950/30 text-slate-600 px-3 py-4 text-xs font-mono select-none text-right border-l border-slate-800/40 flex flex-col gap-0.5 min-w-[36px]">
+                        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div><div>14</div><div>15</div><div>16</div>
+                    </div>
+                    <textarea id="output-code" spellcheck="false" dir="ltr" placeholder="// خروجی متامورفیک نهایی پس از کامپایل در این بخش نمایش داده می‌شود..." class="flex-grow p-4 bg-[#080d16]/30 text-emerald-400 code-font text-xs leading-relaxed outline-none border-none resize-none focus:ring-0 placeholder:text-slate-600 h-[450px] text-left break-all whitespace-pre-wrap max-w-full overflow-x-auto"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- فوتر -->
+    <footer class="border-t border-slate-900 bg-slate-950/80 py-6 mt-12 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 text-center sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>تمامی محاسبات به صورت آفلاین و در مرورگر شما در یک بستر امن Sandbox اجرا می‌شوند.</p>
+            <p class="code-font text-slate-600">Designed with modern aesthetics &copy; 2026 Qorvhex Slayer.</p>
+        </div>
+    </footer>
+
+    <!-- هاب پیام‌رسان (Custom Toast notification system to replace window.alert) -->
+    <div id="toast-container" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+    <!-- منطق اجرای Web Worker برای جلوگیری از هنگ کردن مرورگر -->
+    <script>
+        // کد سورس وب‌ورکر حاوی کامپایلر Babel و افزونه‌های Metamorphic
+        const workerCode = `
+            importScripts('https://unpkg.com/@babel/standalone/babel.min.js');
+
+            let stats = {
+                varsRenamed: 0,
+                stringsEncoded: 0,
+                numbersObfuscated: 0,
+                predicatesInjected: 0
+            };
+
+            function getRandomOpaquePredicate(t) {
+                var choices = [
+                    function() {
+                        return t.callExpression(
+                            t.functionExpression(
+                                null,
+                                [t.identifier('a')],
+                                t.blockStatement([
+                                    t.returnStatement(
+                                        t.binaryExpression('===', 
+                                            t.binaryExpression('*', t.identifier('a'), t.numericLiteral(2)),
+                                            t.numericLiteral(8)
+                                        )
+                                    )
+                                ])
+                            ),
+                            [t.numericLiteral(4)]
+                        );
+                    },
+                    function() {
+                        return t.callExpression(
+                            t.functionExpression(
+                                null,
+                                [t.identifier('x'), t.identifier('y')],
+                                t.blockStatement([
+                                    t.returnStatement(
+                                        t.binaryExpression('===',
+                                            t.binaryExpression('+', t.identifier('x'), t.identifier('y')),
+                                            t.numericLiteral(10)
+                                        )
+                                    )
+                                ])
+                            ),
+                            [t.numericLiteral(3), t.numericLiteral(7)]
+                        );
+                    },
+                    function() {
+                        return t.binaryExpression('===',
+                            t.callExpression(
+                                t.memberExpression(t.identifier('Math'), t.identifier('floor')),
+                                [t.binaryExpression('*',
+                                    t.callExpression(t.memberExpression(t.identifier('Math'), t.identifier('random')), []),
+                                    t.numericLiteral(0)
+                                )]
+                            ),
+                            t.numericLiteral(0)
+                        );
+                    }
+                ];
+                return choices[Math.floor(Math.random() * choices.length)]();
+            }
+
+            function transformNumericLiteral(path, t) {
+                var value = path.node.value;
+                if (path.node._processed) return;
+
+                if (path.parentPath.isObjectProperty({ key: path.node }) && !path.parentPath.node.computed) {
+                    return;
+                }
+                if (path.parentPath.isClassProperty() || path.parentPath.isClassMethod()) {
+                    return;
+                }
+                if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
+                    return;
+                }
+
+                var part1, part2;
+                if (Number.isInteger(value)) {
+                    var offset = Math.floor(Math.random() * 20) + 1;
+                    part1 = value - offset;
+                    part2 = offset;
+                } else {
+                    var offset = Math.random() * 5;
+                    part1 = value - offset;
+                    part2 = offset;
+                }
+
+                var num1 = t.numericLiteral(part1);
+                var num2 = t.numericLiteral(part2);
+                num1._processed = true;
+                num2._processed = true;
+
+                var addition = t.binaryExpression('+', num1, num2);
+
+                var iife = t.callExpression(
+                    t.functionExpression(
+                        null,
+                        [],
+                        t.blockStatement([
+                            t.returnStatement(addition)
+                        ])
+                    ),
+                    []
+                );
+
+                iife._processed = true;
+                path.replaceWith(iife);
+                path.skip();
+                stats.numbersObfuscated++;
+            }
+
+            function transformStringLiteralToXorIife(path, t) {
+                var value = path.node.value;
+                if (path.node._processed) return;
+
+                if (path.parentPath.isDirective()) return;
+                if (path.parentPath.isImportDeclaration() || 
+                    path.parentPath.isExportNamedDeclaration() || 
+                    path.parentPath.isExportAllDeclaration()) {
+                    return;
+                }
+                if (path.parentPath.isObjectProperty({ key: path.node }) && !path.parentPath.node.computed) {
+                    return;
+                }
+                if ((path.parentPath.isClassProperty() || path.parentPath.isClassMethod()) && path.parentPath.node.key === path.node) {
+                    return;
+                }
+
+                var key = Math.floor(Math.random() * 254) + 1;
+                var encryptedBytes = [];
+                for (var i = 0; i < value.length; i++) {
+                    encryptedBytes.push(value.charCodeAt(i) ^ key);
+                }
+
+                var arrayLiteral = t.arrayExpression(encryptedBytes.map(function(b) {
+                    var n = t.numericLiteral(b);
+                    n._processed = true;
+                    return n;
+                }));
+                
+                var keyLiteral = t.numericLiteral(key);
+                keyLiteral._processed = true;
+
+                var decryptIife = t.callExpression(
+                    t.functionExpression(
+                        null,
+                        [t.identifier('a'), t.identifier('k')],
+                        t.blockStatement([
+                            t.variableDeclaration('var', [
+                                t.variableDeclarator(t.identifier('s'), t.stringLiteral(''))
+                            ]),
+                            t.forStatement(
+                                t.variableDeclaration('var', [
+                                    t.variableDeclarator(t.identifier('i'), t.numericLiteral(0))
+                                ]),
+                                t.binaryExpression('<', t.identifier('i'), t.memberExpression(t.identifier('a'), t.identifier('length'))),
+                                t.updateExpression('++', t.identifier('i')),
+                                t.blockStatement([
+                                    t.expressionStatement(
+                                        t.assignmentExpression('+=',
+                                            t.identifier('s'),
+                                            t.callExpression(
+                                                t.memberExpression(t.identifier('String'), t.identifier('fromCharCode')),
+                                                [
+                                                    t.binaryExpression('^',
+                                                        t.memberExpression(t.identifier('a'), t.identifier('i'), true),
+                                                        t.identifier('k')
+                                                    )
+                                                ]
+                                            )
+                                        )
+                                    )
+                                ])
+                            ),
+                            t.returnStatement(t.identifier('s'))
+                        ])
+                    ),
+                    [arrayLiteral, keyLiteral]
+                );
+
+                decryptIife._processed = true;
+                path.replaceWith(decryptIife);
+                path.skip();
+                stats.stringsEncoded++;
+            }
+
+            Babel.registerPlugin('metamorphic', function(babel) {
+                var t = babel.types;
+                return {
+                    visitor: {
+                        Scope(path, state) {
+                            if (!state.opts.renameVars) return;
+                            var scope = path.scope;
+                            
+                            if (!this.renamedBindings) {
+                                this.renamedBindings = new Set();
+                                this.usedNames = new Set();
+                            }
+
+                            var words = [
+                                'coin', 'player', 'config', 'data', 'result', 'status', 'value', 'total',
+                                'count', 'index', 'item', 'user', 'system', 'handler', 'context', 'element',
+                                'node', 'token', 'request', 'response', 'payload', 'state', 'action', 'task',
+                                'helper', 'client', 'server', 'session', 'buffer', 'cache', 'manager', 'service',
+                                'module', 'factory', 'score', 'level', 'game', 'file', 'app', 'core', 'main',
+                                'view', 'model', 'route', 'auth', 'admin', 'guest', 'order', 'cart', 'price',
+                                'stock', 'product', 'image', 'title', 'text', 'name', 'desc', 'utils', 'logger'
+                            ];
+                            
+                            var descriptors = [
+                                'active', 'temp', 'local', 'global', 'current', 'next', 'prev', 'old', 'new',
+                                'valid', 'invalid', 'inner', 'outer', 'custom', 'default', 'shared', 'raw'
+                            ];
+
+                            var reservedWords = new Set([
+                                'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete',
+                                'do', 'else', 'export', 'extends', 'finally', 'for', 'function', 'if', 'import', 'in',
+                                'instanceof', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try', 'typeof', 'var',
+                                'void', 'while', 'with', 'yield', 'let', 'static', 'enum', 'await', 'null', 'true', 'false'
+                            ]);
+                            
+                            var generateReadableName = function() {
+                                var name;
+                                var attempts = 0;
+                                do {
+                                    attempts++;
+                                    if (attempts < 15) {
+                                        name = words[Math.floor(Math.random() * words.length)];
+                                    } else if (attempts < 40) {
+                                        var desc = descriptors[Math.floor(Math.random() * descriptors.length)];
+                                        var wrd = words[Math.floor(Math.random() * words.length)];
+                                        name = desc + wrd.charAt(0).toUpperCase() + wrd.slice(1);
+                                    } else {
+                                        var wrd1 = words[Math.floor(Math.random() * words.length)];
+                                        var wrd2 = words[Math.floor(Math.random() * words.length)];
+                                        name = wrd1 + wrd2.charAt(0).toUpperCase() + wrd2.slice(1);
+                                    }
+                                    if (attempts > 60) {
+                                        name += Math.floor(Math.random() * 100);
+                                    }
+                                } while (this.usedNames.has(name) || reservedWords.has(name));
+                                
+                                this.usedNames.add(name);
+                                return name;
+                            }.bind(this);
+
+                            var keys = Object.keys(scope.bindings);
+                            for (var i = 0; i < keys.length; i++) {
+                                var name = keys[i];
+                                var binding = scope.bindings[name];
+                                if (binding && !this.renamedBindings.has(binding)) {
+                                    var newName = generateReadableName();
+                                    scope.rename(name, newName);
+                                    this.renamedBindings.add(binding);
+                                    stats.varsRenamed++;
+                                }
+                            }
+                        },
+
+                        MemberExpression(path, state) {
+                            if (!state.opts.obfuscateProperties) return;
+                            if (path.node.computed) return;
+                            if (path.node.object && path.node.object.type === 'Super') return;
+
+                            if (t.isIdentifier(path.node.property)) {
+                                var propName = path.node.property.name;
+                                var strLiteral = t.stringLiteral(propName);
+                                path.node.property = strLiteral;
+                                path.node.computed = true;
+                            }
+                        },
+
+                        NumericLiteral(path, state) {
+                            if (!state.opts.obfuscateNumbers) return;
+                            transformNumericLiteral(path, t);
+                        },
+
+                        StringLiteral(path, state) {
+                            if (!state.opts.encodeStrings) return;
+                            transformStringLiteralToXorIife(path, t);
+                        },
+
+                        ExpressionStatement(path, state) {
+                            if (!state.opts.injectPredicates) return;
+                            if (path.node._processed) return;
+
+                            if (!path.parentPath.isBlockStatement() && !path.parentPath.isProgram()) {
+                                return;
+                            }
+
+                            if (Math.random() > 0.4) return;
+
+                            var originalNode = path.node;
+                            originalNode._processed = true;
+
+                            var opaqueCondition = getRandomOpaquePredicate(t);
+                            var ifStmt = t.ifStatement(
+                                opaqueCondition,
+                                t.blockStatement([originalNode])
+                            );
+
+                            ifStmt._processed = true;
+                            path.replaceWith(ifStmt);
+                            path.skip();
+                            stats.predicatesInjected++;
+                        }
+                    }
+                };
+            });
+
+            self.onmessage = function(e) {
+                var inputCode = e.data.inputCode;
+                var options = e.data.options;
+
+                stats = {
+                    varsRenamed: 0,
+                    stringsEncoded: 0,
+                    numbersObfuscated: 0,
+                    predicatesInjected: 0
+                };
+
+                try {
+                    var result = Babel.transform(inputCode, {
+                        plugins: [
+                            ['metamorphic', options]
+                        ],
+                        compact: false,
+                        comments: false
+                    });
+                    self.postMessage({ success: true, code: result.code, stats: stats });
+                } catch (err) {
+                    self.postMessage({ success: false, error: err.stack || err.message });
+                }
+            };
+        `;
+
+        // دکمه لود نمونه پیش‌فرض جهت تعامل بهتر و یادگیری کاربر
+        const testCodeSample = `// کدهای جاوااسکریپت ساده جهت آزمایش دگرگونی متامورفیک
+const apiToken = "qorvhex_secret_key_11029";
+let baseCoins = 1500;
+
+function checkSystemAuthorization(user) {
+    if (user.role === 'admin') {
+        const priorityScore = 10;
+        console.log("خوش آمدید کاربر ارشد: " + user.name);
+        return baseCoins * priorityScore;
+    }
+    return baseCoins;
+}
+
+const currentSession = checkSystemAuthorization({ name: "آرش", role: "admin" });
+console.log("میزان دارایی نهایی:", currentSession);`;
+
+        let compilationWorker = null;
+
+        // وب‌ورکر مجزا برای پردازش بدون فریز شدن مرورگر
+        function setupWorker() {
+            if (compilationWorker) {
+                compilationWorker.terminate();
+            }
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            compilationWorker = new Worker(URL.createObjectURL(blob));
+
+            compilationWorker.onmessage = function(e) {
+                const data = e.data;
+                
+                document.getElementById('loading-overlay').classList.add('hidden');
+                document.getElementById('btn-transform').removeAttribute('disabled');
+                document.getElementById('transform-spinner').classList.add('hidden');
+
+                if (data.success) {
+                    document.getElementById('error-alert').classList.add('hidden');
+                    document.getElementById('output-code').value = data.code;
+                    
+                    document.getElementById('stat-vars').textContent = data.stats.varsRenamed;
+                    document.getElementById('stat-strings').textContent = data.stats.stringsEncoded;
+                    document.getElementById('stat-numbers').textContent = data.stats.numbersObfuscated;
+                    document.getElementById('stat-predicates').textContent = data.stats.predicatesInjected;
+                    
+                    showToast("دگرگونی با موفقیت پایان یافت!", "success");
+                } else {
+                    document.getElementById('error-alert').classList.remove('hidden');
+                    document.getElementById('error-message').textContent = data.error;
+                    document.getElementById('output-code').value = `/* کامپایل ناموفق بود */\n\n${data.error}`;
+                    
+                    document.getElementById('stat-vars').textContent = "0";
+                    document.getElementById('stat-strings').textContent = "0";
+                    document.getElementById('stat-numbers').textContent = "0";
+                    document.getElementById('stat-predicates').textContent = "0";
+                    
+                    showToast("خطا در ترجمه و مبهم‌سازی کدهای ارسالی", "error");
+                }
+            };
+        }
+
+        // سیستم پیام رسان بومی و پیشرفته Toast (جایگزین ایمن پنجره‌های مزاحم alert)
+        function showToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            toast.className = `p-4 rounded-xl shadow-lg border text-xs font-semibold flex items-center gap-3 transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto`;
+            
+            if (type === "success") {
+                toast.className += " bg-emerald-950/90 text-emerald-300 border-emerald-500/30";
+                toast.innerHTML = `
+                    <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>${message}</span>
+                `;
+            } else if (type === "error") {
+                toast.className += " bg-rose-950/90 text-rose-300 border-rose-500/30";
+                toast.innerHTML = `
+                    <svg class="w-5 h-5 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>${message}</span>
+                `;
+            } else {
+                toast.className += " bg-slate-900/90 text-slate-300 border-slate-700/50";
+                toast.innerHTML = `
+                    <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>${message}</span>
+                `;
+            }
+
+            container.appendChild(toast);
+            
+            // انیمیشن رندر شدن
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-2');
+            }, 10);
+
+            // انیمیشن حذف خودکار
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3500);
+        }
+
+        // محرک اصلی اجرای فرآیند کامپایل متامورفیک
+        function triggerTransformation() {
+            const inputCode = document.getElementById('input-code').value;
+            
+            if (!inputCode.trim()) {
+                showToast("کادر ورودی خالی است! لطفاً ابتدا کدی بنویسید یا فایلی بارگذاری کنید.", "error");
+                document.getElementById('output-code').value = "";
+                return;
+            }
+
+            const options = {
+                renameVars: document.getElementById('opt-rename').checked,
+                encodeStrings: document.getElementById('opt-strings').checked,
+                obfuscateNumbers: document.getElementById('opt-numbers').checked,
+                injectPredicates: document.getElementById('opt-predicates').checked,
+                obfuscateProperties: document.getElementById('opt-properties').checked
+            };
+
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('btn-transform').setAttribute('disabled', 'true');
+            document.getElementById('transform-spinner').classList.remove('hidden');
+
+            compilationWorker.postMessage({ inputCode, options });
+        }
+
+        // عملکرد کپی ایمن در پس‌زمینه (استفاده از روش‌های موازی متداول)
+        function copyFallback(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return successful;
+            } catch (err) {
+                console.error("خطا در کپی سنتی مرورگر:", err);
+                document.body.removeChild(textArea);
+                return false;
+            }
+        }
+
+        // دانلود مستقیم کدهای خروجی به صورت فایل دانلودی مستقل
+        function downloadOutputFile() {
+            const outputValue = document.getElementById('output-code').value;
+            if (!outputValue.trim()) {
+                showToast("کد خروجی هنوز خالی است!", "error");
+                return;
+            }
+            const blob = new Blob([outputValue], { type: 'application/javascript;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'qorvhex_slayer_metamorphic.js';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast("فایل با موفقیت صادر و دانلود شد.", "success");
+        }
+
+        // مدیریت فرآیندهای پس از لود صفحه و رویدادهای Drag & Drop
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputArea = document.getElementById('input-code');
+            const outputArea = document.getElementById('output-code');
+            const btnTransform = document.getElementById('btn-transform');
+            const btnReset = document.getElementById('btn-reset');
+            const btnCopy = document.getElementById('btn-copy');
+            const btnDemo = document.getElementById('btn-demo');
+            const btnDownload = document.getElementById('btn-download');
+            const fileUpload = document.getElementById('file-upload');
+            const dragOverlay = document.getElementById('drag-overlay');
+
+            setupWorker();
+
+            // دکمه نمونه تستی
+            btnDemo.addEventListener('click', () => {
+                inputArea.value = testCodeSample;
+                showToast("کد نمونه پیش‌فرض بارگذاری شد.", "success");
+                triggerTransformation();
+            });
+
+            // دکمه دگرگونی
+            btnTransform.addEventListener('click', triggerTransformation);
+            
+            // دانلود خروجی
+            btnDownload.addEventListener('click', downloadOutputFile);
+
+            // پاکسازی کلی صفحه با متد متحرک
+            btnReset.addEventListener('click', () => {
+                inputArea.value = "";
+                outputArea.value = "";
+                document.getElementById('error-alert').classList.add('hidden');
+                document.getElementById('stat-vars').textContent = "0";
+                document.getElementById('stat-strings').textContent = "0";
+                document.getElementById('stat-numbers').textContent = "0";
+                document.getElementById('stat-predicates').textContent = "0";
+                showToast("پنل‌ها و آمار با موفقیت خالی شدند.", "info");
+            });
+
+            // تعامل کشیدن و رها کردن فایل جاوااسکریپت (Drag and Drop JS files)
+            document.body.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragOverlay.classList.remove('hidden');
+                dragOverlay.classList.add('flex');
+            });
+
+            document.body.addEventListener('dragleave', (e) => {
+                // ممانعت از لرزش لایه با بررسی خروج از محدوده کل
+                if (e.relatedTarget === null || e.clientY <= 0 || e.clientX <= 0) {
+                    dragOverlay.classList.add('hidden');
+                    dragOverlay.classList.remove('flex');
+                }
+            });
+
+            dragOverlay.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragOverlay.classList.add('hidden');
+                dragOverlay.classList.remove('flex');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].name.endsWith('.js')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        inputArea.value = event.target.result;
+                        showToast(`فایل "${files[0].name}" با موفقیت بارگذاری شد.`, "success");
+                        triggerTransformation();
+                    };
+                    reader.readAsText(files[0]);
+                } else {
+                    showToast("فرمت نامعتبر است! لطفا فقط فایل‌های با پسوند .js بارگذاری کنید.", "error");
+                }
+            });
+
+            // مدیریت بارگذاری فایل محلی معمولی
+            fileUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    inputArea.value = event.target.result;
+                    showToast(`فایل "${file.name}" آماده پردازش است.`, "success");
+                    triggerTransformation();
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+
+            // عملیات کپی پیشرفته و هوشمند
+            btnCopy.addEventListener('click', async () => {
+                const outputValue = outputArea.value;
+                if (!outputValue.trim()) {
+                    showToast("هنوز کدی در خروجی برای کپی کردن تولید نشده است!", "error");
+                    return;
+                }
+
+                const copyText = document.getElementById('copy-text');
+                const copyIcon = document.getElementById('copy-icon');
+
+                let success = false;
+                if (navigator.clipboard && window.isSecureContext) {
+                    try {
+                        await navigator.clipboard.writeText(outputValue);
+                        success = true;
+                    } catch (err) {
+                        console.warn("استفاده از کیپ‌بورد مدرن شکست خورد، فعالسازی روش سنتی...", err);
+                    }
+                }
+
+                if (!success) {
+                    success = copyFallback(outputValue);
+                }
+
+                if (success) {
+                    showToast("کد خروجی با موفقیت در کلیپ‌بورد کپی شد.", "success");
+                    copyText.textContent = "کپی شد!";
+                    copyIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />`;
+                    btnCopy.classList.add('bg-emerald-600', 'border-emerald-500', 'text-white');
+                    btnCopy.classList.remove('bg-slate-800/80', 'border-slate-700/60', 'text-slate-300');
+
+                    setTimeout(() => {
+                        copyText.textContent = "کپی کد خروجی";
+                        copyIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />`;
+                        btnCopy.classList.remove('bg-emerald-600', 'border-emerald-500', 'text-white');
+                        btnCopy.classList.add('bg-slate-800/80', 'border-slate-700/60', 'text-slate-300');
+                    }, 2000);
+                } else {
+                    showToast("امکان کپی خودکار در این شرایط وجود ندارد. لطفاً متن را دستی کپی نمایید.", "error");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
